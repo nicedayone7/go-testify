@@ -48,7 +48,14 @@ func mainHandle(w http.ResponseWriter, req *http.Request) {
 }
 
 func TestMainHandlerWhenCorrectRequest(t *testing.T) {
-    
+    req := httptest.NewRequest(http.MethodGet, "/cafe?count=3&city=moscow", nil)
+
+    responseRecorder := httptest.NewRecorder()
+    handler:= http.HandlerFunc(mainHandle)
+    handler.ServeHTTP(responseRecorder, req)
+
+    assert.Equal(t, responseRecorder.Code, http.StatusOK)
+    assert.NotEmpty(t, responseRecorder.Body)
 }
 
 func TestMainHandlerWhenCountMoreThanTotal(t *testing.T) {
