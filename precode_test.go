@@ -1,10 +1,13 @@
 package main
 
 import (
-	"net/http/httptest"
-	"testing"
-    "github.com/stretchr/testify/assert"
 	"net/http"
+	"net/http/httptest"
+	"strings"
+
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMainHandlerWhenCorrectRequest(t *testing.T) {
@@ -14,7 +17,7 @@ func TestMainHandlerWhenCorrectRequest(t *testing.T) {
     handler:= http.HandlerFunc(mainHandle)
     handler.ServeHTTP(responseRecorder, req)
 
-    assert.Equal(t, responseRecorder.Code, http.StatusOK)
+    assert.Equal(t, http.StatusOK, responseRecorder.Code)
     assert.NotEmpty(t, responseRecorder.Body)
 }
 
@@ -29,7 +32,7 @@ func TestMainHandlerWhenCityNotSupport(t *testing.T) {
     handler.ServeHTTP(responseRecorder, req)
 
     assert.Equal(t, http.StatusBadRequest, responseRecorder.Code)
-    assert.Equal(t, responseRecorder.Body, bodyResponse)
+    assert.Equal(t, bodyResponse, responseRecorder.Body.String())
 }
 
 
@@ -42,6 +45,6 @@ func TestMainHandlerWhenCountMoreThanTotal(t *testing.T) {
     handler := http.HandlerFunc(mainHandle)
     handler.ServeHTTP(responseRecorder, req)
 
-    assert.Equal(t, responseRecorder.Code, http.StatusOK)
-    assert.Len(t, responseRecorder.Body, totalCount)
+    assert.Equal(t, http.StatusOK, responseRecorder.Code)
+    assert.Equal(t, totalCount, len(strings.Split(responseRecorder.Body.String(), ",")))
 }
